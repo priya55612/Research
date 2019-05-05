@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
- 
+import os
 cropping = False
  
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
  
-image = cv2.imread('Slap_data/001/L1.jp2')
+image = cv2.imread('Slap_data_1/004/L1.jp2')
 oriImage = image.copy()
 #print(oriImage.shape)
 
@@ -35,7 +35,9 @@ def mouse_crop(event, x, y, flags, param):
  
         if len(refPoint) == 2: #when two points were found
             roi = oriImage[refPoint[0][1]:refPoint[1][1], refPoint[0][0]:refPoint[1][0]]
-            cv2.imshow("Cropped", roi)
+            # cv2.imshow("Cropped", roi)
+            cv2.imwrite('temp.png', roi)
+            
  
 cv2.namedWindow("image",cv2.WINDOW_NORMAL)
 cv2.setMouseCallback("image", mouse_crop)
@@ -47,12 +49,47 @@ while True:
  	# i = oriImage.copy()
     if not cropping:
         cv2.imshow("image", oriImage)
+        #print("not cropping")
  
     elif cropping:
         cv2.rectangle(i, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
+        #print("cropping")
         cv2.imshow("image", i)
  
-    cv2.waitKey(1)
+    # cv2.waitKey(1)
+    k = cv2.waitKey(1)
+    if  k == ord('s'):
+        temp = cv2.imread('temp.png')
+        cv2.imshow("Cropped", temp)
+        k = cv2.waitKey(0)
+        if k == ord('n'):
+            cv2.destroyWindow('Cropped')
+        elif k == ord('1'):
+            l = os.listdir('1_distal_phalanges')
+            print(l)
+            j = []
+            for i in range(len(l)):
+                m =l[i][2:-4]
+                j.append(int(m))
+            g = max(j)+1
+            #print(g)
+            cv2.imwrite('1_distal_phalanges/'+'1_'+str(g)+'.png', temp)
+            cv2.destroyWindow('Cropped')
+        elif k == ord('2'):
+            l = os.listdir('2_proximal_phalanges')
+            print(l)
+            j = []
+            for i in range(len(l)):
+                m =l[i][2:-4]
+                j.append(int(m))
+            g = max(j)+1
+            #print(g)
+            cv2.imwrite('2_proximal_phalanges/'+'2_'+str(g)+'.png', temp)
+            cv2.destroyWindow('Cropped')
+
+
+
+
  
 # close all open windows
 cv2.destroyAllWindows()
